@@ -1,3 +1,4 @@
 *.class
 compile.bat
 target
+config.xml

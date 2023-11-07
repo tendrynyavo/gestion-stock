@@ -1,0 +1,17 @@
+@import '../global/variables';
+
+.icon {
+    text-align: center;
+    display: block;
+    margin-top: 20px;
+    
+    img {
+        padding: 10px;
+        
+        &:hover {
+            border-radius: $border-radius;
+            background-color: $green;
+            color: white;
+        }
+    }
+}

@@ -1,0 +1,39 @@
+@import '../global/variables';
+
+$border-radius-input: 7px;
+
+.input {
+    position: relative;
+
+    &__value {
+        border: 1px solid $input;
+        border-radius: $border-radius-input;
+        padding: 15px;
+        width: 300px;
+        font-size: 15px;
+        font-weight: bold;
+        
+        &:hover {
+            outline: none;
+        }
+    
+        &:focus {
+            outline: none;
+        }
+    }
+
+
+    &__label {
+        $padding: 7px;
+        font-size: 14px;
+        position: absolute;
+        margin-bottom: 5px;
+        padding-left: $padding;
+        padding-right: $padding;
+        background-color: white;
+        color: $input;
+        bottom: 35px;
+        left: 9px;
+    }
+
+}

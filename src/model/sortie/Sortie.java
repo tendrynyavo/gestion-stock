@@ -1,5 +1,6 @@
 package model.sortie;
 
+import java.sql.Connection;
 import java.sql.Date;
 import connection.BddObject;
 import connection.annotation.ColumnName;
@@ -51,6 +52,37 @@ public class Sortie extends BddObject {
         this.setTable("sortie");
         this.setPrimaryKeyName("id_sortie");
         this.setConnection("PostgreSQL");
+    }
+
+    public Sortie(String date, String article, String quantite, String magasin) throws Exception {
+
+    }
+
+    public void sortir(String date, String article, String quantite, String magasin) throws Exception {
+        Connection connection = null;
+        try {
+            connection = this.getConnection();
+            Mouvement[] mouvements = sortir(date, article, quantite, magasin, connection);
+            for (Mouvement mouvement : mouvements) {
+                mouvement.insert(connection);
+            }
+            connection.commit();
+        } catch (Exception e) {
+            if (connection != null) {
+                connection.rollback();
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+
+    public Mouvement[] sortir(String date, String article, String quantite, String magasin, Connection connection) throws Exception {
+        Sortie sortie = new Sortie(date, article, quantite, magasin);
+        sortie.insert(connection);
+        return null;
     }
 
 }

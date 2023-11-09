@@ -25,8 +25,9 @@ public class Article extends BddObject {
         return unite;
     }
 
-    public void setCode(String code) {
+    public Article setCode(String code) {
         this.code = code;
+        return this;
     }
 
     public void setNom(String nom) {

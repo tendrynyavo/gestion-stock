@@ -2,9 +2,12 @@ package model.sortie;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import connection.BddObject;
 import connection.annotation.ColumnName;
 import model.article.Article;
+import model.entree.Entree;
 import model.magasin.Magasin;
 
 public class Sortie extends BddObject {
@@ -35,8 +38,16 @@ public class Sortie extends BddObject {
         this.date = date;
     }
 
+    public void setDate(String date) {
+        this.setDate(Date.valueOf(date));
+    }
+
     public void setQuantite(double quantite) {
         this.quantite = quantite;
+    }
+
+    public void setQuantite(String quantite) {
+        this.setQuantite(Double.parseDouble(quantite));
     }
 
     public void setMagasin(Magasin magasin) {
@@ -51,11 +62,18 @@ public class Sortie extends BddObject {
         super();
         this.setTable("sortie");
         this.setPrimaryKeyName("id_sortie");
+        this.setPrefix("S");
+        this.setCountPK(5);
+        this.setFunctionPK("nextval('seq_sortie')");
         this.setConnection("PostgreSQL");
     }
 
-    public Sortie(String date, String article, String quantite, String magasin) throws Exception {
-
+    public Sortie(String date, Article article, String quantite, String magasin) throws Exception {
+        this();
+        this.setDate(date);
+        this.setQuantite(quantite);
+        this.setMagasin(new Magasin(magasin));
+        this.setArticle(article);
     }
 
     public void sortir(String date, String article, String quantite, String magasin) throws Exception {
@@ -80,9 +98,23 @@ public class Sortie extends BddObject {
     }
 
     public Mouvement[] sortir(String date, String article, String quantite, String magasin, Connection connection) throws Exception {
-        Sortie sortie = new Sortie(date, article, quantite, magasin);
+        Article[] articles = (Article[]) new Article().setCode(article).findAll(connection, null);
+        if (articles.length == 0) throw new IllegalArgumentException(String.format("Article avec le code %s n'existe pas", article));
+        Sortie sortie = new Sortie(date, articles[0], quantite, magasin);
         sortie.insert(connection);
-        return null;
+        String type = (articles[0].getType() == 1) ? "ASC" : "DESC";
+        Entree[] etats = (Entree[]) ((BddObject) new Entree().setTable(String.format("v_etat_stock WHERE date_entree <= '%s'", date))).findAll(connection, "date_entree " + type);
+        double s = sortie.getQuantite();
+        List<Mouvement> mouvements = new ArrayList<>();
+        for (Entree entree : etats) {
+            s -= entree.getQuantite();
+            if (s <= 0) {
+                mouvements.add(new Mouvement(sortie.getId(), entree, s + entree.getQuantite()));
+                return mouvements.toArray(new Mouvement[0]);
+            }
+            mouvements.add(new Mouvement(sortie.getId(), entree, entree.getQuantite()));
+        }
+        throw new Exception("Stock insuffisant");
     }
 
 }

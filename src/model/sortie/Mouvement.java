@@ -1,30 +1,32 @@
 package model.sortie;
 
-import connection.BddObject;
 import model.entree.Entree;
 
-public class Mouvement extends BddObject {
+public class Mouvement extends Sortie {
 
-    Sortie sortie;
     Entree entree;
-    double quantite;
-
-    public Sortie getSortie() {
-        return sortie;
-    }
 
     public Entree getEntree() {
         return entree;
     }
 
-    public double getQuantite() {
-        return quantite;
+    public void setEntree(Entree entree) {
+        this.entree = entree;
     }
 
     public Mouvement() throws Exception {
         super();
         this.setTable("mouvement");
+        this.setPrimaryKeyName("id_sortie");
+        this.setSerial(false);
         this.setConnection("PostgreSQL");
+    }
+
+    public Mouvement(String sortie, Entree entree, double quantite) throws Exception {
+        this();
+        this.setId(sortie);
+        this.setEntree(entree);
+        this.setQuantite(quantite);
     }
     
 }

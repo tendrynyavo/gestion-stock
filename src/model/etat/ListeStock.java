@@ -42,8 +42,23 @@ public class ListeStock extends Article {
         this.magasin = magasin;
     }
 
+    public double getPrixUnitaireMoyennePonderee() {
+        if (this.getReste() == 0) return 0;
+        return this.getMontant() / this.getReste();
+    }
+
     public ListeStock() throws Exception {
         super();
+    }
+
+    public ListeStock(String code, String nom, String unite, double initial, double reste, double montant, Magasin magasin) throws Exception {
+        this.setCode(code);
+        this.setNom(nom);
+        this.setUnite(unite);
+        this.setQuantite(initial);
+        this.setReste(reste);
+        this.setMontant(montant);
+        this.setMagasin(magasin);
     }
     
 }

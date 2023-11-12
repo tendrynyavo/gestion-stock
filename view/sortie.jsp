@@ -19,7 +19,7 @@
     }
 </style>
 <body>
-    <form class="container w-50 p-5 shadow-sm rounded-3 mt-5 bg-white" action="./controller/sortie/sortie.jsp">
+    <form class="container w-50 p-5 shadow-sm rounded-3 mt-5 bg-white" action="./controller/sortie/sortie.jsp" method="POST">
         <div class="mb-3">
             <label for="date" class="form-label">Date</label>
             <input type="date" class="form-control" name="date">
@@ -30,7 +30,7 @@
         </div>
         <div class="mb-3">
             <label for="quantite" class="form-label">Quantite</label>
-            <input type="text" class="form-control" name="quantite">
+            <input type="number" class="form-control" name="quantite">
         </div>
         <div class="mb-3">
             <label for="magasin" class="form-label">Magasin</label>
@@ -41,7 +41,7 @@
                 <% } %>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Sortir</button>
+        <button type="submit" class="btn btn-success px-5">Sortir</button>
     </form>
 </body>
 </html>

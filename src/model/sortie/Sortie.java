@@ -34,19 +34,23 @@ public class Sortie extends BddObject {
         return article;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Date date) throws IllegalArgumentException {
+        if (date.before(new Date(System.currentTimeMillis()))) throw new IllegalArgumentException("Date est invalide");
         this.date = date;
     }
 
-    public void setDate(String date) {
+    public void setDate(String date) throws IllegalArgumentException {
+        if (date.isEmpty()) throw new IllegalArgumentException("Date est vide");
         this.setDate(Date.valueOf(date));
     }
 
-    public void setQuantite(double quantite) {
+    public void setQuantite(double quantite) throws IllegalArgumentException {
+        if (quantite < 0) throw new IllegalArgumentException("Quantite est invalide");
         this.quantite = quantite;
     }
 
-    public void setQuantite(String quantite) {
+    public void setQuantite(String quantite) throws IllegalArgumentException {
+        if (quantite.isEmpty()) throw new IllegalArgumentException("Quantite est vide");
         this.setQuantite(Double.parseDouble(quantite));
     }
 
@@ -97,7 +101,7 @@ public class Sortie extends BddObject {
         }
     }
 
-    public Mouvement[] sortir(String date, String article, String quantite, String magasin, Connection connection) throws Exception {
+    public static Mouvement[] sortir(String date, String article, String quantite, String magasin, Connection connection) throws Exception {
         Article[] articles = (Article[]) new Article().setCode(article).findAll(connection, null);
         if (articles.length == 0) throw new IllegalArgumentException(String.format("Article avec le code %s n'existe pas", article));
         Sortie sortie = new Sortie(date, articles[0], quantite, magasin);
@@ -114,7 +118,7 @@ public class Sortie extends BddObject {
             }
             mouvements.add(new Mouvement(sortie.getId(), entree, entree.getQuantite()));
         }
-        throw new Exception("Stock insuffisant");
+        throw new IllegalArgumentException(String.format("Stock de %s insuffisant", articles[0].getNom()));
     }
 
 }

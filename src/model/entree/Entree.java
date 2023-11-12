@@ -1,7 +1,6 @@
 package model.entree;
 
 import java.sql.Date;
-
 import connection.BddObject;
 import connection.annotation.ColumnName;
 import model.article.Article;

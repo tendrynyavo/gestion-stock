@@ -1,9 +1,9 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@page contentType="text/html; charset=UTF-8" %>
 <%@page import="model.etat.EtatStock" %>
 <%@page import="model.etat.ListeStock" %>
 <%
 
-  EtatStock etatStock = EtatStock.getEtatStock("2021-12-02", "2021-12-03", "%R%", "%M1%");
+  EtatStock etatStock = EtatStock.getEtatStock(request.getParameter("initiale"), request.getParameter("finale"), "%"+request.getParameter("article")+"%", "%"+request.getParameter("magasin")+"%");
 
 %>
 <!DOCTYPE html>
@@ -14,13 +14,19 @@
     <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
     <title>Etat stock</title>
 </head>
+<style>
+    body {
+        background-color: rgb(237, 237, 237);
+    }
+</style>
 <body>
-    <div class="container w-75 mt-5">
+    <div class="bg-white shadow-sm p-5 rounded-3 container w-75 mt-5">
+        <h2>Etat de Stock</h2>
         <div class="d-flex">
-            <h3>Date initial : <%=etatStock.getInitiale() %></h3>
-            <h3 class="ms-5">Date finale : <%=etatStock.getFinale() %></h3>
+            <h5>Date initial : <%=etatStock.getInitiale() %></h5>
+            <h5 class="ms-5">Date finale : <%=etatStock.getFinale() %></h5>
         </div>
-        <table class="table">
+        <table class="table mt-4">
             <thead>
               <tr>
                 <th scope="col">Code</th>
@@ -48,6 +54,11 @@
               <% } %>
             </tbody>
           </table>
+          <h5>Montant Total : <%=etatStock.getTotalMontant() %></h5>
+          <div class="mt-4">
+            <a href="./sortie.jsp" class="btn btn-outline-info">Sortir un article</a>
+            <a href="./choix-stock.jsp" class="btn btn-outline-info">Revenir</a>
+          </div>
     </div>
 </body>
 </html>

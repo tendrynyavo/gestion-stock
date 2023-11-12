@@ -17,3 +17,6 @@ INSERT INTO sortie VALUES
 INSERT INTO mouvement VALUES
     ('S0001', 'E0001', 1000),
     ('S0001', 'E0002', 200);
+
+INSERT INTO sortie VALUES
+    ('S0001', '2021-12-02', 500, 'MG001', 'ART001');

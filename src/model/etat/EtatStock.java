@@ -2,6 +2,7 @@ package model.etat;
 
 import java.sql.Connection;
 import java.sql.Date;
+import agregation.Liste;
 import connection.BddObject;
 import model.article.Article;
 import model.entree.Entree;
@@ -30,7 +31,8 @@ public class EtatStock {
         this.finale = finale;
     }
 
-    public void setFinale(String finale) {
+    public void setFinale(String finale) throws IllegalArgumentException {
+        if (finale.isEmpty()) throw new IllegalArgumentException("Date finale est vide");
         this.setFinale(Date.valueOf(finale));
     }
 
@@ -39,11 +41,21 @@ public class EtatStock {
     }
     
     public void setInitiale(String initiale) {
+        if (initiale.isEmpty()) throw new IllegalArgumentException("Date initiale est vide");
         this.setInitiale(Date.valueOf(initiale));
     }
 
     public void setStocks(ListeStock[] stocks) {
         this.stocks = stocks;
+    }
+
+    public double getTotalMontant() {
+        try {
+            return Liste.sommer(this.getStocks(), "getMontant");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
     }
 
     public EtatStock(String initiale, String finale) {
@@ -107,6 +119,7 @@ public class EtatStock {
         
     /// Resultat
         EtatStock etatStock = new EtatStock(initiale, finale);
+        Liste.sort(stocks, "getMontant", "DESC");
         etatStock.setStocks(stocks);
         return etatStock;
     }

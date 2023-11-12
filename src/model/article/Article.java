@@ -25,7 +25,8 @@ public class Article extends BddObject {
         return unite;
     }
 
-    public Article setCode(String code) {
+    public Article setCode(String code) throws IllegalArgumentException {
+        if (code.isEmpty()) throw new IllegalArgumentException("Code est vide");
         this.code = code;
         return this;
     }

@@ -58,6 +58,11 @@ public class Sortie extends BddObject {
         this.magasin = magasin;
     }
 
+    public void setMagasin(String magasin) throws Exception {
+        if (magasin.isEmpty()) throw new IllegalArgumentException("Aucun magasin choisi");
+        this.setMagasin(new Magasin(magasin));
+    }
+
     public void setArticle(Article article) {
         this.article = article;
     }
@@ -76,7 +81,7 @@ public class Sortie extends BddObject {
         this();
         this.setDate(date);
         this.setQuantite(quantite);
-        this.setMagasin(new Magasin(magasin));
+        this.setMagasin(magasin);
         this.setArticle(article);
     }
 
@@ -101,24 +106,39 @@ public class Sortie extends BddObject {
         }
     }
 
-    public static Mouvement[] sortir(String date, String article, String quantite, String magasin, Connection connection) throws Exception {
-        Article[] articles = (Article[]) new Article().setCode(article).findAll(connection, null);
-        if (articles.length == 0) throw new IllegalArgumentException(String.format("Article avec le code %s n'existe pas", article));
-        Sortie sortie = new Sortie(date, articles[0], quantite, magasin);
-        sortie.insert(connection);
-        String type = (articles[0].getType() == 1) ? "ASC" : "DESC";
-        Entree[] etats = (Entree[]) ((BddObject) new Entree().setTable(String.format("v_etat_stock WHERE date_entree <= '%s'", date))).findAll(connection, "date_entree " + type);
-        double s = sortie.getQuantite();
-        List<Mouvement> mouvements = new ArrayList<>();
-        for (Entree entree : etats) {
-            s -= entree.getQuantite();
-            if (s <= 0) {
-                mouvements.add(new Mouvement(sortie.getId(), entree, s + entree.getQuantite()));
-                return mouvements.toArray(new Mouvement[0]);
+    public Mouvement[] sortir(String date, String article, String quantite, String magasin, Connection connection) throws Exception {
+        boolean connect = false;
+        try {
+            if (connection == null) {
+                connection = this.getConnection(); 
+                connect = true;
             }
-            mouvements.add(new Mouvement(sortie.getId(), entree, entree.getQuantite()));
+            Article[] articles = (Article[]) new Article().setCode(article).findAll(connection, null);
+            if (articles.length == 0) throw new IllegalArgumentException(String.format("Article avec le code %s n'existe pas", article));
+            // Insertion de la sortie
+            Sortie sortie = new Sortie(date, articles[0], quantite, magasin);
+            sortie.insert(connection);
+            String type = (articles[0].getType() == 1) ? "ASC" : "DESC"; // Type pour savoir FIFO ou LIFO
+            
+            // Donnée de l'etat de stock actuelle par rapport article, magasin
+            Entree[] etats = (Entree[]) ((BddObject) new Entree().setTable(String.format("v_etat_stock WHERE date_entree <= '%s' AND id_article = '%s' AND id_magasin = '%s'", date, articles[0].getId(), magasin))).findAll(connection, "date_entree " + type);
+            double somme = sortie.getQuantite();
+            double reste = 0;
+            List<Mouvement> mouvements = new ArrayList<>();
+            for (Entree entree : etats) {
+                somme -= entree.getQuantite(); reste += entree.getQuantite();
+                if (somme <= 0) {
+                    mouvements.add(new Mouvement(sortie.getId(), entree, somme + entree.getQuantite()));
+                    return mouvements.toArray(new Mouvement[0]);
+                }
+                mouvements.add(new Mouvement(sortie.getId(), entree, entree.getQuantite()));
+            }
+            throw new IllegalArgumentException(String.format("Stock de %s insuffisant avec reste : %s %s", articles[0].getNom(), reste, articles[0].getUnite()));
+        } finally {
+            if (connect) {
+                connection.commit(); connection.close();
+            }
         }
-        throw new IllegalArgumentException(String.format("Stock de %s insuffisant", articles[0].getNom()));
     }
 
 }

@@ -1,6 +1,7 @@
 <%@page contentType="text/html; charset=UTF-8" %>
 <%@page import="model.etat.EtatStock" %>
 <%@page import="model.etat.ListeStock" %>
+<%@page errorPage="./choix-stock.jsp" %>
 <%
 
   EtatStock etatStock = EtatStock.getEtatStock(request.getParameter("initiale"), request.getParameter("finale"), "%"+request.getParameter("article")+"%", "%"+request.getParameter("magasin")+"%");
@@ -11,7 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/gestion-stock/assets/bootstrap/css/bootstrap.min.css">
     <title>Etat stock</title>
 </head>
 <style>

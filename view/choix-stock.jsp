@@ -1,4 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@page isErrorPage="true" %>
+<%
+
+    String error = (exception == null) ? "" : exception.getMessage();
+
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +36,8 @@
             <label for="quantite" class="form-label">Magasin</label>
             <input type="text" class="form-control" name="magasin">
         </div>
-        <button type="submit" class="btn btn-success px-5">Valider</button>
+        <h4 class="my-3 text-danger"><%=error %></h4>
+        <button type="submit" class="btn btn-outline-info px-5">Valider</button>
     </form>
 </body>
 </html>

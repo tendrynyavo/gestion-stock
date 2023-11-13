@@ -65,6 +65,7 @@ public class EtatStock {
 
     public static EtatStock getEtatStock(String initiale, String finale, String code, String codeMagasin) throws Exception {
         ListeStock[] stocks = null;
+        EtatStock etatStock = new EtatStock(initiale, finale);
         try (Connection connection = BddObject.getPostgreSQL()) {
         /// Donnée
             Article[] articles = (Article[]) ((BddObject) new Article().setTable(String.format("article WHERE code LIKE '%s'", code))).findAll(connection, null);
@@ -118,7 +119,6 @@ public class EtatStock {
         }
         
     /// Resultat
-        EtatStock etatStock = new EtatStock(initiale, finale);
         Liste.sort(stocks, "getMontant", "DESC");
         etatStock.setStocks(stocks);
         return etatStock;

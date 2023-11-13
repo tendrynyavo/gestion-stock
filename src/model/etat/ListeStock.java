@@ -24,7 +24,7 @@ public class ListeStock extends Article {
     }
 
     public String getQuantiteFormat() {
-        return format(this.getMontant());
+        return format(this.getQuantite());
     }
 
     public double getReste() {

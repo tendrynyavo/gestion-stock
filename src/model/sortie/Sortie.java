@@ -34,8 +34,8 @@ public class Sortie extends BddObject {
         return article;
     }
 
-    public void setDate(Date date) throws IllegalArgumentException {
-        if (date.before(new Date(System.currentTimeMillis()))) throw new IllegalArgumentException("Date est invalide");
+    public void setDate(Date date) {
+        // if (date.before(new Date(System.currentTimeMillis()))) throw new IllegalArgumentException("Date est invalide");
         this.date = date;
     }
 

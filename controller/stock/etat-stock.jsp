@@ -4,7 +4,7 @@
 <%@page import="model.etat.EtatStock" %>
 <%
 
-    EtatStock etatStock = EtatStock.getEtatStock("2021-12-02", "2021-12-04", "%RR%", "%M1%");
+    EtatStock etatStock = EtatStock.getEtatStock(request.getParameter("initiale"), request.getParameter("finale"), "%"+request.getParameter("article")+"%", "%"+request.getParameter("magasin")+"%");
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     out.print(gson.toJson(etatStock));
 

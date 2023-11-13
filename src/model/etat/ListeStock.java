@@ -1,5 +1,8 @@
 package model.etat;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 import model.article.Article;
 import model.magasin.Magasin;
 
@@ -10,12 +13,26 @@ public class ListeStock extends Article {
     double montant;
     Magasin magasin;
 
+    public static String format(double number) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        return df.format(number);
+    }
+
     public double getQuantite() {
         return quantite;
     }
 
+    public String getQuantiteFormat() {
+        return format(this.getMontant());
+    }
+
     public double getReste() {
         return reste;
+    }
+
+    public String getResteFormat() {
+        return format(this.getReste());
     }
 
     public Magasin getMagasin() {
@@ -24,6 +41,10 @@ public class ListeStock extends Article {
 
     public double getMontant() {
         return montant;
+    }
+
+    public String getMontantFormat() {
+        return format(this.getMontant());
     }
 
     public void setQuantite(double quantite) {
@@ -45,6 +66,10 @@ public class ListeStock extends Article {
     public double getPrixUnitaireMoyennePonderee() {
         if (this.getReste() == 0) return 0;
         return this.getMontant() / this.getReste();
+    }
+
+    public String getPrixUnitaireMoyennePondereeFormat() {
+        return format(this.getPrixUnitaireMoyennePonderee());
     }
 
     public ListeStock() throws Exception {

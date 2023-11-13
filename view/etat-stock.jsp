@@ -46,16 +46,16 @@
                 <th scope="row"><%=stock.getCode() %></th>
                 <td><%=stock.getNom() %></td>
                 <td><%=stock.getUnite() %></td>
-                <td><%=stock.getQuantite() %></td>
-                <td><%=stock.getReste() %></td>
-                <td><%=stock.getPrixUnitaireMoyennePonderee() %></td>
+                <td><%=stock.getQuantiteFormat() %></td>
+                <td><%=stock.getResteFormat() %></td>
+                <td><%=stock.getPrixUnitaireMoyennePondereeFormat() %></td>
                 <td><%=stock.getMagasin().getNom() %></td>
-                <td><%=stock.getMontant() %></td>
+                <td><%=stock.getMontantFormat() %></td>
               </tr>
               <% } %>
             </tbody>
           </table>
-          <h5>Montant Total : <%=etatStock.getTotalMontant() %></h5>
+          <h5>Montant Total : <%=etatStock.getMontantFormat() %></h5>
           <div class="mt-4">
             <a href="./sortie.jsp" class="btn btn-outline-info">Sortir un article</a>
             <a href="./choix-stock.jsp" class="btn btn-outline-info">Revenir</a>

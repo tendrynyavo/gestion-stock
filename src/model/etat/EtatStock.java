@@ -58,6 +58,10 @@ public class EtatStock {
         }
     }
 
+    public String getMontantFormat() {
+        return ListeStock.format(getTotalMontant());
+    }
+
     public EtatStock(String initiale, String finale) {
         this.setInitiale(initiale);
         this.setFinale(finale);

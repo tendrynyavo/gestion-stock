@@ -1,7 +1,5 @@
 #!/bin/bash
 
-TOMCAT_PATH="D:/Server local/Tomcat 10.1"
-
 if [ -d "target" ]; then
     rm -rf ./target
 fi
@@ -25,7 +23,7 @@ cp -R controller/* ./target/controller
 # Compile all java files
 find src -name '*.java' > file.txt
 grep -i '.java' file.txt > sources.txt
-javac -source 11 -target 11 -parameters -cp ./lib/* -d ./target/WEB-INF/classes/ -@ sources.txt
+javac -source 11 -target 11 -parameters -cp './target/WEB-INF/lib/*' -d ./target/WEB-INF/classes/ @sources.txt
 if [ $? -ne 0 ]; then
     exit $?
 fi

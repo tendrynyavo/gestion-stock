@@ -22,7 +22,7 @@
 </style>
 <body>
     <div class="bg-white shadow-sm p-5 rounded-3 container w-75 mt-5">
-        <h2>Propla</h2>
+        <h2>Etat de stock</h2>
         <div class="d-flex">
             <h5>Date initial : <%=etatStock.getInitiale() %></h5>
             <h5 class="ms-5">Date finale : <%=etatStock.getFinale() %></h5>

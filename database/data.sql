@@ -15,11 +15,11 @@ INSERT INTO entree VALUES
     ('E0006', '2021-11-05', 1000, 2500, 'MG001', 'ART002');
 
 INSERT INTO sortie VALUES
-    ('S0001', '2021-12-02', 1200, 'MG001', 'ART001');
+    ('S0001', '2021-12-02', 1200, 'MG001', 'ART001', 10);
 
 INSERT INTO mouvement VALUES
     ('S0001', 'E0001', 1000),
     ('S0001', 'E0002', 200);
 
-INSERT INTO sortie VALUES
-    ('S0001', '2021-12-02', 500, 'MG001', 'ART001');
+INSERT INTO validation_mouvement (id_validation, date, id_employe, id_sortie) VALUES
+    ('V0001', '2021-12-11', 'EMP001', 'S0001');

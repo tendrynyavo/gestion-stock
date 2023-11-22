@@ -20,15 +20,15 @@ CREATE TABLE Sortie(
    quantite DOUBLE PRECISION NOT NULL,
    id_magasin VARCHAR(50) ,
    id_article VARCHAR(50) ,
+   status INTEGER NOT NULL DEFAULT 0,
    PRIMARY KEY(id_sortie),
    FOREIGN KEY(id_magasin) REFERENCES Magasin(id_magasin),
    FOREIGN KEY(id_article) REFERENCES Article(id_article)
 );
 
 CREATE SEQUENCE seq_sortie
-    INCREMENT BY 1
-    START WITH 1;
-
+   INCREMENT BY 1
+   START WITH 1;
 
 CREATE TABLE Entree(
    id_entree VARCHAR(50) ,
@@ -50,3 +50,41 @@ CREATE TABLE Mouvement(
    FOREIGN KEY(id_sortie) REFERENCES Sortie(id_sortie),
    FOREIGN KEY(id_entree) REFERENCES Entree(id_entree)
 );
+
+CREATE SEQUENCE seq_validation
+   INCREMENT BY 1
+   START WITH 1;
+
+CREATE SEQUENCE s_employe
+   INCREMENT BY 1
+   START WITH 1;
+
+CREATE TABLE Employe(
+   id_employe VARCHAR(50) ,
+   nom VARCHAR(100)  NOT NULL,
+   prenom VARCHAR(100)  NOT NULL,
+   telephone VARCHAR(50) ,
+   genre VARCHAR(10)  NOT NULL,
+   password VARCHAR(100)  NOT NULL,
+   date_naissance DATE,
+   email VARCHAR(100)  NOT NULL,
+   PRIMARY KEY(id_employe)
+);
+
+CREATE TABLE validation_mouvement (
+   id_validation VARCHAR(50) PRIMARY KEY,
+   date DATE NOT NULL,
+   id_employe VARCHAR(50) REFERENCES employe(id_employe),
+   id_sortie VARCHAR(50) REFERENCES sortie(id_sortie)
+);
+
+CREATE OR REPLACE VIEW v_mouvement_validation AS
+SELECT s.*, v.id_validation, v.date as date_validation, v.id_employe
+FROM sortie s
+   JOIN validation_mouvement v ON s.id_sortie=v.id_sortie
+WHERE status >= 10;
+
+CREATE OR REPLACE VIEW v_last_mouvement AS
+SELECT id_article, id_magasin, MAX(date_validation) AS date, SUM(quantite) AS quantite
+FROM v_mouvement_validation
+GROUP BY id_article, id_magasin;

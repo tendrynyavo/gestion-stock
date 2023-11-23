@@ -1,13 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.mouvement.Mouvement" %>
 <%@page import="model.magasin.Magasin" %>
-<%@page import="model.mouvement.Unite" %>
-<%@page import="model.article.Article" %>
 <%@page isErrorPage="true" %>
 <%
 
-  Magasin[] magasins = (Magasin[]) new Magasin().findAll(null);
-  Unite[] unites = Article.getUnite(request.getParameter("article"));
-  String error = (exception == null) ? "" : exception.getMessage();
+    Mouvement mouvement = Mouvement.getMouvement(request.getParameter("sortie"), null);
+    Magasin[] magasins = (Magasin[]) new Magasin().findAll(null);
+    String error = (exception == null) ? "" : exception.getMessage();
 
 %>
 <!DOCTYPE html>
@@ -24,17 +23,18 @@
     }
 </style>
 <body>
-    <form class="container w-50 p-5 shadow-sm rounded-3 mt-5 bg-white" action="/gestion-stock/controller/sortie/sortie.jsp" method="POST">
+    <form class="container w-50 p-5 shadow-sm rounded-3 mt-5 bg-white" action="/gestion-stock/controller/sortie/update.jsp" method="POST">
         <div class="mb-3">
             <label for="date" class="form-label">Date</label>
-            <input type="date" class="form-control" name="date">
+            <input type="date" class="form-control" name="date" value="<%=mouvement.getDate() %>">
         </div>
         <div class="mb-3">
-            <input type="hidden" class="form-control" name="article" value="<%=request.getParameter("article") %>">
+            <label for="article" class="form-label">Article</label>
+            <input type="text" class="form-control" name="article" value="<%=mouvement.getArticle().getCode() %>">
         </div>
         <div class="mb-3">
             <label for="quantite" class="form-label">Quantité</label>
-            <input type="number" class="form-control" name="quantite">
+            <input type="number" class="form-control" name="quantite" value="<%=mouvement.getQuantite() %>">
         </div>
         <div class="mb-3">
             <label for="magasin" class="form-label">Magasin</label>
@@ -44,16 +44,9 @@
                 <% } %>
             </select>
         </div>
-        <div class="mb-3">
-            <label for="magasin" class="form-label">Unite</label>
-            <select class="form-select" name="unite">
-                <% for (Unite unite : unites) { %>
-                <option value="<%=unite.getId() %>"><%=unite.getNom() %></option>
-                <% } %>
-            </select>
-        </div>
+        <input type="hidden" name="sortie" value="<%=request.getParameter("sortie") %>" >
         <h4 class="my-3 text-danger"><%=error %></h4>
-        <button type="submit" class="btn btn-outline-info px-5">Sortir</button>
+        <button type="submit" class="btn btn-outline-info px-5">Update</button>
     </form>
 </body>
 </html>

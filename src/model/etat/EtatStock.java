@@ -2,15 +2,11 @@ package model.etat;
 
 import java.sql.Connection;
 import java.sql.Date;
-
-import com.google.gson.Gson;
-
 import agregation.Liste;
 import connection.BddObject;
 import model.article.Article;
 import model.magasin.Magasin;
-import model.sortie.EtatMouvement;
-import model.sortie.Mouvement;
+import model.mouvement.EtatMouvement;
 
 public class EtatStock {
 
@@ -75,30 +71,27 @@ public class EtatStock {
         this.setFinale(finale);
     }
 
-    public static EtatStock getEtatStock(String initiale, String finale, String code, String codeMagasin) throws Exception {
+    public static EtatStock getEtatStock(String initiale, String finale, String code, String magasin) throws Exception {
         EtatStock etatStock = new EtatStock(initiale, finale);
         try (Connection connection = BddObject.getPostgreSQL()) {
             /// Donnée
             Article[] articles = (Article[]) ((BddObject) new Article().setTable(String.format("article WHERE code LIKE '%s'", code))).findAll(connection, null);
-            Magasin[] magasins = (Magasin[]) ((BddObject) new Magasin().setTable(String.format("magasin WHERE nom LIKE '%s'", codeMagasin))).findAll(connection, null);
+            Magasin[] magasins = (Magasin[]) ((BddObject) new Magasin().setTable(String.format("magasin WHERE nom LIKE '%s'", magasin))).findAll(connection, null);
             ListeStock[] stocks = new ListeStock[articles.length * magasins.length];
             int p = 0;
             for (int i = 0; i < articles.length; i++) {
                 for (int j = 0; j < magasins.length; j++) {
                     double initial = magasins[j].getReste(articles[i], Date.valueOf(initiale), connection);
                     EtatMouvement[] etats = magasins[j].getEtatMouvements(articles[i], Date.valueOf(finale), connection);
-                    stocks[p] = new ListeStock(articles[i].getCode(), articles[i].getNom(), articles[i].getUnite(), initial, Liste.sommer(etats, "getReste"), Liste.sommer(etats, "getMontant"), magasins[j]);
+                    double reste = Liste.sommer(etats, "getReste");
+                    double montant = Liste.sommer(etats, "getMontant");
+                    stocks[p] = new ListeStock(articles[i].getCode(), articles[i].getNom(), articles[i].getUnite(), initial, reste, montant, magasins[j]);
                     p++;
                 }
             }
             etatStock.setStocks(stocks);
         }
         return etatStock;
-    }
-
-    public static void main(String[] args) throws Exception {
-        EtatStock etatStock = EtatStock.getEtatStock("2021-12-02", "2021-12-03", "%", "%");
-        System.out.println(new Gson().toJson(etatStock));
     }
     
 }

@@ -3,9 +3,20 @@ CREATE TABLE Article(
    code VARCHAR(50)  NOT NULL,
    nom VARCHAR(100) ,
    type INTEGER,
-   unite VARCHAR(50)  NOT NULL,
    PRIMARY KEY(id_article),
    UNIQUE(code)
+);
+
+CREATE TABLE unite (
+   id_unite VARCHAR(50) PRIMARY KEY,
+   nom VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE article_unite (
+   id SERIAL PRIMARY KEY,
+   id_unite VARCHAR(50) REFERENCES unite(id_unite),
+   id_article VARCHAR(50) REFERENCES article(id_article),
+   value DOUBLE PRECISION NOT NULL
 );
 
 CREATE TABLE Magasin(
@@ -21,6 +32,7 @@ CREATE TABLE Sortie(
    id_magasin VARCHAR(50) ,
    id_article VARCHAR(50) ,
    status INTEGER NOT NULL DEFAULT 0,
+   id_unite INTEGER REFERENCES article_unite(id),
    PRIMARY KEY(id_sortie),
    FOREIGN KEY(id_magasin) REFERENCES Magasin(id_magasin),
    FOREIGN KEY(id_article) REFERENCES Article(id_article)
@@ -37,6 +49,7 @@ CREATE TABLE Entree(
    prix_unitaire DOUBLE PRECISION NOT NULL,
    id_magasin VARCHAR(50) ,
    id_article VARCHAR(50) ,
+   id_unite INTEGER REFERENCES article_unite(id),
    PRIMARY KEY(id_entree),
    FOREIGN KEY(id_magasin) REFERENCES Magasin(id_magasin),
    FOREIGN KEY(id_article) REFERENCES Article(id_article)
@@ -56,6 +69,10 @@ CREATE SEQUENCE seq_validation
    START WITH 1;
 
 CREATE SEQUENCE s_employe
+   INCREMENT BY 1
+   START WITH 1;
+
+CREATE SEQUENCE seq_entree
    INCREMENT BY 1
    START WITH 1;
 
@@ -88,3 +105,13 @@ CREATE OR REPLACE VIEW v_last_mouvement AS
 SELECT id_article, id_magasin, MAX(date_validation) AS date, SUM(quantite) AS quantite
 FROM v_mouvement_validation
 GROUP BY id_article, id_magasin;
+
+CREATE OR REPLACE VIEW v_unite AS 
+SELECT  u.id_unite, a.id, u.nom, a.id_article, a.value
+FROM article_unite a
+   JOIN unite u ON a.id_unite=u.id_unite;
+
+CREATE OR REPLACE VIEW v_last_unite AS
+SELECT id_article, MIN(value) AS value
+FROM v_unite
+GROUP BY id_article;

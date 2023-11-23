@@ -2,13 +2,15 @@ package model.magasin;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 import agregation.Liste;
 import connection.BddObject;
 import model.article.Article;
-import model.etat.EtatStock;
-import model.etat.ListeStock;
-import model.sortie.EtatMouvement;
-import model.sortie.Mouvement;
+import model.mouvement.EtatMouvement;
+import model.mouvement.Mouvement;
+import model.mouvement.Unite;
 
 public class Magasin extends BddObject {
 
@@ -41,6 +43,7 @@ public class Magasin extends BddObject {
 
     public Mouvement getLastMouvement(Article article, Connection connection) throws Exception {
         Mouvement mouvement = new Mouvement();
+        mouvement.getColumns().get(0).setName("date");
         mouvement.setTable("v_last_mouvement");
         mouvement.setArticle(article);
         mouvement.setMagasin(this);
@@ -49,15 +52,43 @@ public class Magasin extends BddObject {
     }
 
     public EtatMouvement[] getEtatMouvements(Article article, Date date, Connection connection) throws Exception {
-        String table = String.format("v_etat_stock WHERE date_entree <= '%s' AND code LIKE '%s' AND id_magasin = '%s'", date, article.getCode(), this.getId());
         String type = (article.getType() == 1) ? "ASC" : "DESC";
-        BddObject object = ((BddObject) new EtatMouvement().setTable(table));
-        return (connection == null) ? (EtatMouvement[]) object.findAll("date_entree, id_entree " + type) : (EtatMouvement[]) object.findAll(connection, "date_entree, id_entree " + type);
+        EtatMouvement[] entrees = (EtatMouvement[]) ((BddObject) new EtatMouvement().setTable(String.format("entree WHERE date_entree <= '%s' AND id_article = '%s' AND id_magasin = '%s'", date, article.getId(), this.getId()))).findAll(connection, "(date_entree, id_entree) " + type);
+        Mouvement[] sorties = (Mouvement[]) new Mouvement().getData(String.format("SELECT id_entree, SUM(sortie) as quantite FROM v_mouvement WHERE date_validation <= '%s' AND id_article = '%s' AND id_magasin = '%s' GROUP BY id_entree", date, article.getId(), this.getId()), connection);
+        List<EtatMouvement> etats = new ArrayList<>();
+        for (int i = 0; i < entrees.length; i++) {
+            entrees[i].setSortie(0.0);
+            for (Mouvement sortie : sorties) {
+                if (sortie.getIdEntree().equals(entrees[i].getIdEntree())) {
+                    entrees[i].setSortie(sortie.getQuantite());
+                }
+            }
+            if (entrees[i].getReste() > 0) {
+                etats.add(entrees[i]);
+            }
+        }
+        return etats.toArray(new EtatMouvement[0]);
     }
 
     public double getReste(Article article, Date date, Connection connection) throws Exception {
         EtatMouvement[] etats = this.getEtatMouvements(article, date, connection);
         return Liste.sommer(etats, "getReste");
+    }
+
+    public static void main(String[] args) throws Exception {
+        // Article article = new Article();
+        // article.setId("ART001");
+        // article.setType(2);
+        // article.setCode("RR");
+        // Magasin magasin = new Magasin("MG001");
+        // try (Connection connection = BddObject.getPostgreSQL()) {
+        //     Unite unite = new Unite();
+        //     unite.setId("2");
+        //     EtatMouvement[] etatMouvements = magasin.getEtatMouvements(article, Date.valueOf("2021-12-02"), connection);
+        //     for (EtatMouvement etatMouvement : etatMouvements) {
+        //         System.out.println(etatMouvement.getDate() + " " + etatMouvement.getReste() + " " + etatMouvement.getQuantiteLastUnite());
+        //     }
+        // }
     }
 
 }

@@ -1,8 +1,9 @@
-<%@page import="model.sortie.Sortie" %>
+<%@page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.article.Article" %>
 <%@page errorPage="../../sortie.jsp" %>
 <%
 
-    new Sortie().sortir(request.getParameter("date"), request.getParameter("article"), request.getParameter("quantite"), request.getParameter("magasin"));
-    response.sendRedirect("/gestion-stock/choix-stock.jsp");
+    Article.sortir(request.getParameter("article"), request.getParameter("quantite"), request.getParameter("magasin"), request.getParameter("date"), request.getParameter("unite"));
+    response.sendRedirect("/gestion-stock/sortie.jsp?article=" + request.getParameter("article"));
 
 %>

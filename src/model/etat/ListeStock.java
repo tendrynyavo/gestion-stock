@@ -2,7 +2,6 @@ package model.etat;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-
 import model.article.Article;
 import model.magasin.Magasin;
 
@@ -77,6 +76,7 @@ public class ListeStock extends Article {
     }
 
     public ListeStock(String code, String nom, String unite, double initial, double reste, double montant, Magasin magasin) throws Exception {
+        this();
         this.setCode(code);
         this.setNom(nom);
         this.setUnite(unite);

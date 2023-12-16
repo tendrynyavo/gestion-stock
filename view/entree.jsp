@@ -16,7 +16,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/gestion-stock/assets/bootstrap/css/bootstrap.min.css">
-    <title>Sortie</title>
+    <title>Entree</title>
 </head>
 <style>
     body {
@@ -24,7 +24,7 @@
     }
 </style>
 <body>
-    <form class="container w-50 p-5 shadow-sm rounded-3 mt-5 bg-white" action="/gestion-stock/controller/sortie/sortie.jsp" method="POST">
+    <form class="container w-50 p-5 shadow-sm rounded-3 mt-5 bg-white" action="/gestion-stock/controller/entree/entree.jsp" method="POST">
         <div class="mb-3">
             <label for="date" class="form-label">Date</label>
             <input type="date" class="form-control" name="date">
@@ -35,6 +35,10 @@
         <div class="mb-3">
             <label for="quantite" class="form-label">Quantité</label>
             <input type="number" class="form-control" name="quantite">
+        </div>
+        <div class="mb-3">
+            <label for="quantite" class="form-label">Prix Unitaire</label>
+            <input type="text" class="form-control" name="prix">
         </div>
         <div class="mb-3">
             <label for="magasin" class="form-label">Magasin</label>
@@ -53,7 +57,7 @@
             </select>
         </div>
         <h4 class="my-3 text-danger"><%=error %></h4>
-        <button type="submit" class="btn btn-outline-info px-5">Sortir</button>
+        <button type="submit" class="btn btn-outline-info px-5">Entrer</button>
     </form>
 </body>
 </html>

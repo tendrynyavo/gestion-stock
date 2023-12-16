@@ -32,7 +32,6 @@
               <tr>
                 <th scope="col">Code</th>
                 <th scope="col">Article</th>
-                <th scope="col">Unite</th>
                 <th scope="col">Quantite Initiale</th>
                 <th scope="col">Reste</th>
                 <th scope="col">Prix Unitaire Moyenne Pondérée</th>
@@ -45,7 +44,6 @@
               <tr>
                 <th scope="row"><%=stock.getCode() %></th>
                 <td><%=stock.getNom() %></td>
-                <td><%=stock.getUnite() %></td>
                 <td><%=stock.getQuantiteFormat() %></td>
                 <td><%=stock.getResteFormat() %></td>
                 <td><%=stock.getPrixUnitaireMoyennePondereeFormat() %></td>
@@ -58,6 +56,7 @@
           <h5>Montant Total : <%=etatStock.getMontantFormat() %></h5>
           <div class="mt-4">
             <a href="./sortie.jsp" class="btn btn-outline-info">Sortir un article</a>
+            <a href="./liste-sortie.jsp" class="btn btn-outline-info">Liste des sorties</a>
             <a href="./choix-stock.jsp" class="btn btn-outline-info">Revenir</a>
           </div>
     </div>

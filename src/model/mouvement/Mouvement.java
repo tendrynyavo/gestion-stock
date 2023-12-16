@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import agregation.Liste;
-import connection.Bdd;
 import connection.BddObject;
 import connection.annotation.ColumnName;
 import model.article.Article;
@@ -248,25 +247,29 @@ public class Mouvement extends BddObject {
     public static void update(String sortie, String date, String code, String quantite, String codeMagasin) throws Exception {
         try (Connection connection = BddObject.getPostgreSQL()) {
             Mouvement mouvement = new Mouvement();
-            mouvement.setTable("sortie");
-            mouvement.getColumns().get(0).setName("date_sortie");
             mouvement.setId(sortie);
-            mouvement.setDate(date);
-            mouvement.setQuantite(quantite);
-            
-            Article article = Article.checkCodeExists(code, connection);
-            if (article == null) throw new IllegalArgumentException("Article n'existe pas");
-            mouvement.setArticle(article);
-            
-            Magasin magasin = Magasin.exists(codeMagasin, connection); // Prendre le magasin
-            if (magasin == null) throw new IllegalArgumentException("Magasin n'existe pas");
-            
-            article.check(magasin, mouvement.getDate(), mouvement.getQuantite(), connection);
-            
-            mouvement.setMagasin(magasin);
-            mouvement.update(connection);
+            mouvement.updateSortie(date, code, quantite, codeMagasin, connection);
             connection.commit();
         }
+    }
+
+    public void updateSortie(String date, String code, String quantite, String codeMagasin, Connection connection) throws Exception {
+        this.setTable("sortie");
+        this.getColumns().get(0).setName("date_sortie");
+        this.setDate(date);
+        this.setQuantite(quantite);
+        
+        Article article = Article.checkCodeExists(code, connection);
+        if (article == null) throw new IllegalArgumentException("Article n'existe pas");
+        this.setArticle(article);
+        
+        Magasin magasin = Magasin.exists(codeMagasin, connection); // Prendre le magasin
+        if (magasin == null) throw new IllegalArgumentException("Magasin n'existe pas");
+        
+        article.check(magasin, this.getDate(), this.getQuantite(), connection);
+        
+        this.setMagasin(magasin);
+        this.update(connection);
     }
     
 }

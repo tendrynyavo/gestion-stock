@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-
 import agregation.Liste;
 import connection.BddObject;
 import model.article.Article;
 import model.mouvement.EtatMouvement;
 import model.mouvement.Mouvement;
-import model.mouvement.Unite;
 
 public class Magasin extends BddObject {
 
@@ -73,22 +71,6 @@ public class Magasin extends BddObject {
     public double getReste(Article article, Date date, Connection connection) throws Exception {
         EtatMouvement[] etats = this.getEtatMouvements(article, date, connection);
         return Liste.sommer(etats, "getReste");
-    }
-
-    public static void main(String[] args) throws Exception {
-        // Article article = new Article();
-        // article.setId("ART001");
-        // article.setType(2);
-        // article.setCode("RR");
-        // Magasin magasin = new Magasin("MG001");
-        // try (Connection connection = BddObject.getPostgreSQL()) {
-        //     Unite unite = new Unite();
-        //     unite.setId("2");
-        //     EtatMouvement[] etatMouvements = magasin.getEtatMouvements(article, Date.valueOf("2021-12-02"), connection);
-        //     for (EtatMouvement etatMouvement : etatMouvements) {
-        //         System.out.println(etatMouvement.getDate() + " " + etatMouvement.getReste() + " " + etatMouvement.getQuantiteLastUnite());
-        //     }
-        // }
     }
 
 }

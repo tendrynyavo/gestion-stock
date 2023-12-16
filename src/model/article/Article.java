@@ -2,7 +2,6 @@ package model.article;
 
 import java.sql.Connection;
 import java.sql.Date;
-
 import connection.BddObject;
 import model.magasin.Magasin;
 import model.mouvement.Mouvement;
@@ -84,16 +83,17 @@ public class Article extends BddObject {
         Mouvement mouvement = new Mouvement(quantite, date);
         try {
             if (connection == null) { connection = this.getConnection(); connect = true; }
+
+            Magasin magasin = Magasin.exists(idMagasin, connection); // Prendre le magasin
+            if (magasin == null) throw new IllegalArgumentException("Magasin n'existe pas");
+            
             Unite unite = (Unite) new Unite(idUnite).getById(connection);
             if (unite == null) throw new IllegalArgumentException("Unite n'existe pas");
             mouvement.setQuantite(mouvement.getQuantite() * unite.getValue());
             
-            Magasin magasin = Magasin.exists(idMagasin, connection); // Prendre le magasin
-            if (magasin == null) throw new IllegalArgumentException("Magasin n'existe pas");
-        
             // Contrôle complexe (Quantite, Date antérieur)
             this.check(magasin, mouvement.getDate(), mouvement.getQuantite(), connection);
-
+            
             mouvement.setMagasin(magasin);
             mouvement.setUnite(unite);
             mouvement.setArticle(this);
@@ -106,7 +106,9 @@ public class Article extends BddObject {
         return mouvement;
     }
 
+    // Contrôle complexe (Date antérieur, Insuffisance de stock)
     public void check(Magasin magasin, Date date, double quantite, Connection connection) throws Exception {
+        
         /// Contrôle de date antérieure
         Mouvement lastMouvement = magasin.getLastMouvement(this, connection); // Prendre la dernière date de validation d'une sortie
         if (lastMouvement != null && lastMouvement.getDate().after(date))
@@ -116,6 +118,7 @@ public class Article extends BddObject {
         double reste = magasin.getReste(this, date, connection); // Prendre le reste en stock de cette article
         if (quantite > reste)
             throw new IllegalArgumentException(String.format("Stock de %s insuffisant avec reste : %s", this.getNom(), reste));
+        
     }
 
     public static void entrer(String code, String quantite, String idMagasin, String date, String prix, String unite) throws Exception {
@@ -143,13 +146,17 @@ public class Article extends BddObject {
         mouvement.setPrefix("E");
         mouvement.setArticle(this);
         mouvement.setDate(date);
+
         Unite unite = (Unite) new Unite(idUnite).getById(connection);
         if (unite == null) throw new IllegalArgumentException("Unite n'existe pas");
+        
         mouvement.setQuantite(Double.valueOf(quantite) * unite.getValue());
         mouvement.setUnite(unite);
         mouvement.setPrixUnitaire(Double.valueOf(prix) / unite.getValue());
+        
         Magasin magasin = Magasin.exists(idMagasin, connection); // Prendre le magasin
         if (magasin == null) throw new IllegalArgumentException("Magasin n'existe pas");
+        
         mouvement.setMagasin(magasin);
         return mouvement;
     }

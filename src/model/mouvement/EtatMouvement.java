@@ -53,6 +53,7 @@ public class EtatMouvement extends Mouvement {
         return this.getReste() * this.getUnite().getValue();
     }
 
+    @Override
     public double getMontant() {
         return this.getReste() * this.getPrixUnitaire();
     }
